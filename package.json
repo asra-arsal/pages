@@ -1,0 +1,32 @@
+{
+    "author": {
+        "email": "ahmad@shahzad.dev",
+        "name": "Ahmad Shahzad",
+        "url": "https://shahzad.dev"
+    },
+    "dependencies": {
+        "body-parser": "^1.20.2",
+        "dotenv": "^16.3.1",
+        "express": "^4.18.2",
+        "nunjucks": "^3.2.4",
+        "sass": "^1.69.5",
+        "sqlite": "^5.0.1",
+        "sqlite3": "^5.1.6"
+    },
+    "description": "A Unified app to access FB-AUTO and X-AUTO apps from one interface.",
+    "devDependencies": {
+        "nodemon": "^3.0.1"
+    },
+    "license": "MIT",
+    "main": "app.js",
+    "name": "unified-engine",
+    "private": true,
+    "scripts": {
+        "start": "node .",
+        "start:dev": "nodemon -e js,html",
+        "start:sass": "sass --watch scss:public/css",
+        "build:sass": "sass scss:public/css",
+        "upgrade": "git pull & npm i & npm run build:sass"
+    },
+    "version": "0.9.6"
+}
