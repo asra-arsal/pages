@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>UE - FB-AUTO + X-AUTO</title>
+        <link rel="stylesheet" href="/css/home/home.css" />
+    </head>
+    <body>
+        <!-- THE CONTAINER -->
+        <div class="container">
+            <!-- THE SIDEBAR -->
+            <div id="sidebar">
+                <!-- THE HEADER -->
+                <header id="header">
+                    <!-- THE SWITCHES -->
+                    <section id="switches">
+                        <!-- THE SWITCH LOOP -->
+                        {% for type in types %}
+                        <!-- THE {{ type | upper }} SWITCH -->
+                        <button
+                            class="switch {% if type == enview %}active{% endif %}"
+                            data-switch-id="{{ type }}"
+                            onclick="switchTab('{{ type }}')">
+                            <i class="fa-brands fa-{{ type }}{% if type == 'facebook' %}-f{% endif %}"></i>
+                        </button>
+                        {% endfor %}
+                    </section>
+                </header>
+
+                <!-- THE TABS -->
+                <section id="tabs">
+                    <!-- THE TAB LOOP -->
+                    {% for type in types %}
+                    <!-- THE {{ type | upper }} TAB -->
+                    <section class="tab {% if type != enview %}hidden{% endif %}" id="{{ type }}">
+                        <h2 class="tab-heading">{{ type | upper }}</h2>
+                        <button class="create-switch" onclick="openModal('{{ type }}')">Create Link</button>
+
+                        <!-- THE APP CONTAINER -->
+                        <section class="app-container">
+                            <!-- THE APP LOOP -->
+                            {% for app in apps %} {% if app.type == type %}
+                            <article
+                                class="app {% if app.id == app_active.id %}active{% endif %}"
+                                id="app-{{ app.id }}"
+                                onclick="switchFrame('{{ app.id }}', '{{ app.name }}', '{{ app.link }}')">
+                                <section class="app-icon">
+                                    <i class="fa-brands fa-{{app.type}}{% if app.type == 'facebook' %}-f{% endif %}">
+                                    </i>
+                                </section>
+                                <section class="app-details">
+                                    <h3 class="app-name">{{ app.name }}</h3>
+                                    <p class="app-link">{{ app.link }}</p>
+                                </section>
+                                <button
+                                    class="app-delete"
+                                    onclick="openDeleteModal('{{ app.id }}', '{{ app.name }}', '{{ app.link }}')">
+                                    <i class="fa-regular fa-trash-can"></i>
+                                </button>
+                            </article>
+                            {% endif %} {% endfor %}
+                        </section>
+                    </section>
+                    {% endfor %}
+                </section>
+
+                <!-- THE SETTINGS -->
+                <section id="settings">
+                    <button id="settings-button" onclick="orderItems('{{ enview }}')">
+                        <i class="fa-solid fa-gear"></i>
+                    </button>
+
+                    <button id="edit-button" onclick="editItems()">
+                        <i class="fa-regular fa-pen-to-square"></i>
+                    </button>
+                </section>
+            </div>
+
+            <!-- THE SIDEBAR TOGGLE -->
+            <button id="sidebar-toggle" onclick="toggleSidebar()">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+            <!-- THE CONTENT -->
+            <main id="content">
+                <iframe
+                    id="app-frame"
+                    src="{{ app_active.link }}"
+                    frameborder="0"
+                    title="{{ app_active.name }}"></iframe>
+            </main>
+
+            <!-- THE OVERLAY -->
+            <div id="overlay" class="hidden"></div>
+            <div id="modal-create" class="hidden">
+                <h3 id="modal-heading">Create <span id="modal-heading-app"></span> Link</h3>
+                <input type="text" name="type" id="app-type" class="hidden" />
+                <section id="modal-fields">
+                    <input type="text" name="name" id="app-name" placeholder="App Indicator" />
+                    <input type="url" name="link" id="app-link" placeholder="http(s)://(www.)example.org" />
+                </section>
+                <section id="modal-buttons">
+                    <button id="modal-button-cancel" onclick="closeModal('create')">Cancel</button>
+                    <button id="modal-button-create" onclick="createLink()">Create</button>
+                </section>
+            </div>
+
+            <!-- THE DELETE -->
+            <div id="modal-delete" class="hidden">
+                <h3 class="modal-heading">Delete Link</h3>
+                <input type="text" name="id" id="delete-app-id" class="hidden" />
+                <section class="modal-fields">
+                    <input type="text" name="name" id="delete-app-name" placeholder="App Indicator" />
+                    <input type="url" name="link" id="delete-app-link" placeholder="http(s)://(www.)example.org" />
+                </section>
+                <section class="modal-buttons">
+                    <button class="modal-button-cancel" onclick="closeModal('delete')">Cancel</button>
+                    <button class="modal-button-delete" onclick="deleteLink()">Delete</button>
+                </section>
+            </div>
+
+            <!-- THE EDIT -->
+            <div id="modal-edit" class="hidden">
+                <h3 class="modal-heading">Edit Link</h3>
+                <input type="text" name="id" id="edit-app-id" class="hidden" />
+                <section class="modal-fields">
+                    <input type="text" name="name" id="edit-app-name" placeholder="App Indicator" />
+                    <input type="url" name="link" id="edit-app-link" placeholder="http(s)://(www.)example.org" />
+                </section>
+                <section class="modal-buttons">
+                    <button class="modal-button-cancel" onclick="closeModal('edit')">Cancel</button>
+                    <button class="modal-button-edit" onclick="editLink()">Edit</button>
+                </section>
+            </div>
+
+            <!-- THE RE-ORDER -->
+            <div id="modal-re-order" class="hidden">
+                <!-- THE HEADING -->
+                <h3 class="modal-heading">Re-Order <span class="modal-heading-type"></span> Links</h3>
+
+                <!-- THE BUTTONS -->
+                <section class="modal-buttons">
+                    <!-- THE CANCEL BUTTON -->
+                    <button class="modal-re-order-cancel" onclick="closeModal('re-order')">Cancel</button>
+
+                    <!-- THE SAVE BUTTON -->
+                    <button class="modal-re-order-save" onclick="saveAppOrder()">Save</button>
+                </section>
+
+                <!-- THE APPS -->
+                <section class="modal-apps"></section>
+            </div>
+
+            <!-- THE SCRIPTS -->
+            <script src="/js/home/switchTab.js"></script>
+            <script src="/js/home/toggleSidebar.js"></script>
+
+            <script src="/js/home/openModal.js"></script>
+            <script src="/js/home/closeModal.js"></script>
+
+            <script src="/js/home/editLink.js"></script>
+            <script src="/js/home/createLink.js"></script>
+            <script src="/js/home/deleteLink.js"></script>
+
+            <script src="/js/home/switchFrame.js"></script>
+
+            <script src="/js/home/openEditModal.js"></script>
+            <script src="/js/home/openDeleteModal.js"></script>
+
+            <script src="/js/home/editItems.js"></script>
+            <script src="/js/home/orderItems.js"></script>
+        </div>
+    </body>
+</html>
