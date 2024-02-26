@@ -9,7 +9,7 @@ for %%A in (".") do (
 set "currDir=%%~nxA"
 )
 
-set "cmd=pm2 start main.js -n !prevDir!-!currDir!"
+set "cmd=pm2 start app.js -n !prevDir!-!currDir!"
 
 echo Command: !cmd!
 
