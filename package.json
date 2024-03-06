@@ -28,5 +28,5 @@
         "build:sass": "sass scss:public/css",
         "upgrade": "git pull & npm i & npm run build:sass"
     },
-    "version": "0.9.6"
+    "version": "1.0.0"
 }
